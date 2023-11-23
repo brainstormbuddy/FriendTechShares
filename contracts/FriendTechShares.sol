@@ -61,7 +61,7 @@ contract FriendtechSharesV1 is OwnableUpgradeable {
         address sharesSubject
     ) public view returns (uint256) {
         if (sharesWay[sharesSubject] == 0) {
-            return (amount * 2 * 1 ether) / 8000;
+            return (initialPrice * 2 * 1 ether) / 8000;
         } else if (sharesWay[sharesSubject] == 1) {
             return ((2 * (supply - 1 + amount)) * 1 ether) / 12000;
         } else {
