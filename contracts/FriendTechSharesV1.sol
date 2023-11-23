@@ -50,7 +50,7 @@ contract FriendtechSharesV1 is OwnableUpgradeable {
     function setSubjectWay(
         address _sharesSubject,
         uint256 _way
-    ) public onlyOwner {
+    ) public payable {
         require(_way >= 0 && _way <= 2, "Invalid value for sharesWay");
         sharesWay[_sharesSubject] = _way;
     }
@@ -61,11 +61,27 @@ contract FriendtechSharesV1 is OwnableUpgradeable {
         address sharesSubject
     ) public view returns (uint256) {
         if (sharesWay[sharesSubject] == 0) {
-            return (initialPrice * 2 * 1 ether) / 8000;
+            return (initialPrice * amount * 1 ether) / 8000;
         } else if (sharesWay[sharesSubject] == 1) {
-            return ((2 * (supply - 1 + amount)) * 1 ether) / 12000;
+            return
+                supply == 0 && amount == 1
+                    ? 0
+                    : (initialPrice  * (supply - 1 + amount) * 1 ether) /
+                        12000;
         } else {
-            return (2 ** (amount - 1) * 1 ether) / 16000;
+            uint256 base = (10001 * 1e18) / 10000;
+            uint256 result = 1;
+            uint256 exponent = supply - 1 + amount;
+
+            while (exponent > 0) {
+                if (exponent % 2 == 1) {
+                    result = (result * base) / 1e18; // Multiply and divide by 10^18 to maintain fixed-point precision
+                }
+                base = (base * base) / 1e18;
+                exponent /= 2;
+            }
+
+            return result * 1 ether;
         }
     }
 
