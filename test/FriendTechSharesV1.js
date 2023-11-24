@@ -83,21 +83,22 @@ describe("FriendtechSharesV1", () => {
   it("should allow to users to sell shares", async () => {
     const sharesSubject = addr1.address;
     const amountToSell = 20;
+    // Buy shares
     await expect(() =>
       friendtechShares.connect(addr1).buyShares(sharesSubject, 100, {
-        value: ethers.parseEther("15"), // Send more than the calculated price to cover fees
+        value: ethers.parseEther("15"), 
       })
     ).to.changeEtherBalance(addr1, ethers.parseEther("-15"));
     await expect(() =>
       friendtechShares.connect(addr2).buyShares(sharesSubject, 40, {
-        value: ethers.parseEther("6"), // Send more than the calculated price to cover fees
+        value: ethers.parseEther("6"),
       })
     ).to.changeEtherBalance(addr2, ethers.parseEther("-6"));
     const sellPrice = await friendtechShares.getPrice(120, 20, addr1.address);
     // Sell shares
     await expect(() =>
       friendtechShares.connect(addr2).sellShares(sharesSubject, amountToSell)
-    ).to.changeEtherBalance(addr2, ethers.parseEther(await ethers.formatEther(sellPrice))); // Sell price is less than the purchase price
+    ).to.changeEtherBalance(addr2, ethers.parseEther(await ethers.formatEther(sellPrice)));
     const sharesBalance = await friendtechShares.sharesBalance(
       sharesSubject,
       addr2.address
