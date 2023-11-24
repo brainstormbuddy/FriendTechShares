@@ -31,7 +31,9 @@ contract FriendtechSharesV1 is OwnableUpgradeable {
     // SharesSubject => Way
     mapping(address => uint256) public sharesWay;
 
-    function initialize(uint256 _price) public {
+    function initialize(uint256 _price) public initializer {
+        __Ownable_init(msg.sender);
+
         initialPrice = _price;
     }
 
@@ -66,8 +68,7 @@ contract FriendtechSharesV1 is OwnableUpgradeable {
             return
                 supply == 0 && amount == 1
                     ? 0
-                    : (initialPrice  * (supply - 1 + amount) * 1 ether) /
-                        12000;
+                    : (initialPrice * (supply - 1 + amount) * 1 ether) / 12000;
         } else {
             uint256 base = (10001 * 1e18) / 10000;
             uint256 result = 1;
